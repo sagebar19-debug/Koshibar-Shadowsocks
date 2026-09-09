@@ -1,0 +1,11 @@
+services:
+  koshibar-shadowsocks:
+    build: .
+    container_name: koshibar-shadowsocks
+    restart: unless-stopped
+
+    ports:
+      - "8080:8080/tcp"
+
+    volumes:
+      - ./config.json:/etc/shadowsocks-libev/config.json:ro
