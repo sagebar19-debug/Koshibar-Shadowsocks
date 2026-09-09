@@ -1,49 +1,52 @@
-# KÖSHÏBÄR Shadowsocks🌧
+# KÖSHÏBÄR WebSocket
 
-Shadowsocks + WebSocket
+WebSocket service designed for Google Cloud Run.
 
 ## Configuration
 
 Password:
+
 KOSHIBAR
 
-Method:
-chacha20-ietf-poly1305
+WebSocket path:
 
-WebSocket:
-Koshibar/Shadowsocks
+/Koshibar/Shadowsocks
 
 Port:
+
 8080
 
-## Installation
+## Local test
 
-Clone the repository:
+npm install
 
-git clone https://github.com/TON-COMPTE/koshibar-shadowsocks.git
+npm start
 
-cd koshibar-shadowsocks
+## Docker test
 
-Build:
+docker build -t koshibar-shadowsocks .
 
-docker compose build
+docker run --rm \
+  -p 8080:8080 \
+  -e KOSHIBAR_PASSWORD=KOSHIBAR \
+  koshibar-shadowsocks
 
-Start:
+## Cloud Run
 
-docker compose up -d
+Cloud Run provides the PORT environment variable.
 
-Check:
+The application listens on:
 
-docker compose ps
+0.0.0.0:$PORT
 
-Logs:
+Default:
 
-docker compose logs -f
+8080
 
-## Stop
+Health check:
 
-docker compose down
+/health
 
-## Restart
+WebSocket:
 
-docker compose restart
+/Koshibar/Shadowsocks
