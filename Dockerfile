@@ -1,14 +1,15 @@
-FROM alpine:3.22
+FROM node:22-alpine
 
-RUN apk add --no-cache \
-    shadowsocks-libev \
-    v2ray-plugin \
-    ca-certificates
+WORKDIR /app
 
-COPY config.json /etc/shadowsocks-libev/config.json
+COPY package.json ./
+RUN npm install --omit=dev
 
-EXPOSE 8080/tcp
-EXPOSE 80/tcp
-EXPOSE 443/tcp
+COPY server.js ./
 
-CMD ["ss-server", "-c", "/etc/shadowsocks-libev/config.json"]
+ENV NODE_ENV=production
+ENV PORT=8080
+
+EXPOSE 8080
+
+CMD ["node", "server.js"]
