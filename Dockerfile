@@ -1,29 +1,24 @@
+FROM alpine:3.22 AS builder
+
+RUN apk add --no-cache \
+    git \
+    go \
+    build-base
+
+RUN git clone --depth 1 https://github.com/shadowsocks/v2ray-plugin.git /src/v2ray-plugin
+
+WORKDIR /src/v2ray-plugin
+
+RUN go build -o /v2ray-plugin .
+
+
 FROM alpine:3.22
 
 RUN apk add --no-cache \
     shadowsocks-libev \
-    ca-certificates \
-    curl \
-    unzip
+    ca-certificates
 
-ARG TARGETARCH
-
-RUN set -eux; \
-    if [ "$TARGETARCH" = "amd64" ]; then \
-        V2RAY_ARCH="64"; \
-    elif [ "$TARGETARCH" = "arm64" ]; then \
-        V2RAY_ARCH="arm64-v8a"; \
-    else \
-        echo "Unsupported architecture: $TARGETARCH"; \
-        exit 1; \
-    fi; \
-    curl -fL \
-      "https://github.com/shadowsocks/v2ray-plugin/releases/latest/download/v2ray-plugin-linux-${V2RAY_ARCH}-v1.3.2.tar.gz" \
-      -o /tmp/v2ray-plugin.tar.gz; \
-    tar -xzf /tmp/v2ray-plugin.tar.gz -C /tmp; \
-    find /tmp -type f -name 'v2ray-plugin*' -exec cp {} /usr/local/bin/v2ray-plugin \; ; \
-    chmod +x /usr/local/bin/v2ray-plugin; \
-    rm -rf /tmp/*
+COPY --from=builder /v2ray-plugin /usr/local/bin/v2ray-plugin
 
 WORKDIR /app
 
